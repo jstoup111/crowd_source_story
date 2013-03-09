@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Story do
   before { @story = Story.new(title: "New Story", description: "A tale of a new story between some random people.") }
+  let(:user) { FactoryGirl.create(:user) }
+  let(:story_snippet)   { FactoryGirl.create(:story_snippet, user: user, story: story) }
 
   subject { @story }
 
@@ -21,29 +23,36 @@ describe Story do
     it { should_not be_valid }
   end
 
-=begin
-# TODO story snippet association
-  describe "story association" do
-    before { @user.save }
-    let!(:older_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.day.ago)
+  describe "story snippet association" do
+    before { @story.save }
+    let!(:older_snippet) do
+      FactoryGirl.create(:story_snippet, user: user, story: @story, created_at: 1.day.ago)
     end
-    let!(:newer_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.minute.ago)
+    let!(:newer_snippet) do
+      FactoryGirl.create(:story_snippet, user: user, story: @story, created_at: 1.minute.ago)
     end
 
-    it "should have the right stories in the right order" do
-      @user.stories.should == [newer_story, older_story]
+    it "should have the right snippets in the right order" do
+      @story.story_snippets.should == [older_snippet, newer_snippet]
     end
 
-    it "should not destroy associated stories" do
-      stories = @user.stories.dup
-      @user.destroy
-      stories.should_not be_empty
-      stories.each do |s|
-        Story.find_by_id(s.id).should_not be_nil
+    it "should destroy associated story snippets" do
+      snippets = @story.story_snippets.dup
+      @story.destroy
+      snippets.should_not be_empty
+      snippets.each do |s|
+        StorySnippet.find_by_id(s.id).should be_nil
+      end
+    end
+
+    it "should not destroy associated users" do
+      users = @story.users.dup
+      users.should_not be_empty
+      @story.destroy
+      users.should_not be_empty
+      users.each do |s|
+        User.find_by_id(s.id).should_not be_nil
       end
     end
   end
-=end
 end

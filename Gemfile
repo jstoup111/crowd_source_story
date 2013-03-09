@@ -6,6 +6,8 @@ gem 'rails', '3.2.12'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'pg'
+gem 'will_paginate', '3.0.3'
+gem 'bootstrap-will_paginate', '0.0.6'
 
 
 # Gems used only for assets and not required
@@ -21,7 +23,10 @@ group :assets do
 end
 
 gem 'jquery-rails'
-gem 'bootstrap-sass', '2.1.0.0'
+#gem 'bootstrap-sass', '2.1.0.0'
+gem 'therubyracer', '0.11.4'
+gem 'less-rails', '2.3.2'
+gem 'less-rails-bootstrap', '2.3.2'
 
 # To use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.0.0'

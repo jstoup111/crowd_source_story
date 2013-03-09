@@ -1,12 +1,14 @@
 require 'spec_helper'
 
 describe User do
-  before { @user = User.new(name: "Example user", email: "user@example.com", password:"foobar", password_confirmation:"foobar") }
+  before { @user = User.new(name: "Example user", email: "user@example.com", password:"foobar", password_confirmation:"foobar", username: "test") }
 
   subject { @user }
 
   it { should respond_to(:name) }
+  it { should respond_to(:username) }
   it { should respond_to(:email) }
+  it { should respond_to(:remember) }
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
@@ -21,6 +23,23 @@ describe User do
         User.new(password_digest: @user.password_digest)
       end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
     end
+
+    it "should not allow access to confirmation" do
+      expect do
+        User.new(confirmation: @user.confirmation)
+      end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
+
+    it "should not allow access to remember" do
+      expect do
+        User.new(remember: @user.remember)
+      end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
+  end
+
+  describe "remember token" do
+    before { @user.save }
+    its(:remember) { should_not be_blank }
   end
 
   describe "when name is not present" do
@@ -98,23 +117,34 @@ describe User do
     before { @user.password = @user.password_confirmation = "a" * 2 }
     it { should be_invalid }
   end
-=begin
-# TODO story snippet association
-  describe "story association" do
+
+
+  describe "story snippet association" do
     before { @user.save }
-    let!(:older_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.day.ago)
+    let!(:story) { FactoryGirl.create(:story) }
+    let!(:older_snippet) do
+      FactoryGirl.create(:story_snippet, user: @user, story: story, created_at: 1.day.ago)
     end
-    let!(:newer_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.minute.ago)
+    let!(:newer_snippet) do
+      FactoryGirl.create(:story_snippet, user: @user, story: story, created_at: 1.minute.ago)
     end
 
-    it "should have the right stories in the right order" do
-      @user.stories.should == [newer_story, older_story]
+    it "should have the right snippets in the right order" do
+      @user.story_snippets.should == [newer_snippet, older_snippet]
+    end
+
+    it "should not destroy associated story snippets" do
+      snippets = @user.story_snippets.dup
+      @user.destroy
+      snippets.should_not be_empty
+      snippets.each do |s|
+        StorySnippet.find_by_id(s.id).should_not be_nil
+      end
     end
 
     it "should not destroy associated stories" do
       stories = @user.stories.dup
+      stories.should_not be_empty
       @user.destroy
       stories.should_not be_empty
       stories.each do |s|
@@ -122,5 +152,6 @@ describe User do
       end
     end
   end
-=end
+
+  # TODO create confirmation token email and test for this
 end

@@ -3,7 +3,10 @@ require 'spec_helper'
 describe StorySnippet do
   let(:user) { FactoryGirl.create(:user) }
   let(:story){ FactoryGirl.create(:story) }
-  before { @snippet = story.story_snippets.build(content: "Some new content") }
+  before do
+    @snippet = story.story_snippets.build(content: "Some new content that must be long enough to not throw an error")
+    @snippet.user = user
+  end
 
   subject { @snippet }
 
@@ -45,7 +48,7 @@ describe StorySnippet do
   end
 
   describe "when content is too short" do
-    before { @snippet.content = "a" * 99 }
+    before { @snippet.content = "a" * 24 }
     it { should_not be_valid }
   end
 
@@ -55,50 +58,20 @@ describe StorySnippet do
   end
 
   describe "story association" do
-    before { @user.save }
-    let!(:older_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.day.ago)
-    end
-    let!(:newer_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.minute.ago)
-    end
-
-    it "should have the right stories in the right order" do
-      @user.stories.should == [newer_story, older_story]
-    end
+    before { @snippet.save }
 
     it "should not destroy associated stories" do
-      stories = @user.stories.dup
-      @user.destroy
-      stories.should_not be_empty
-      stories.each do |s|
-        Story.find_by_id(s.id).should_not be_nil
-      end
+      @snippet.destroy
+      Story.find_by_id(@snippet.story.id).should_not be_nil
     end
   end
-=begin
-# TODO user and story association
+
   describe "user association" do
-    before { @user.save }
-    let!(:older_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.day.ago)
-    end
-    let!(:newer_story) do
-      FactoryGirl.create(:story, user: @user, created_at: 1.minute.ago)
-    end
+    before { @snippet.save }
 
-    it "should have the right stories in the right order" do
-      @user.stories.should == [newer_story, older_story]
-    end
-
-    it "should not destroy associated stories" do
-      stories = @user.stories.dup
-      @user.destroy
-      stories.should_not be_empty
-      stories.each do |s|
-        Story.find_by_id(s.id).should_not be_nil
-      end
+    it "should not destroy associated users" do
+      @snippet.destroy
+      User.find_by_id(@snippet.user.id).should_not be_nil
     end
   end
-=end
 end
