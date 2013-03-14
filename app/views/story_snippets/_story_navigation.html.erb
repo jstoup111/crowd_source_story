@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="span3 offset1 center">
+    <% unless @previous_snippet.nil? %>
+        <%= link_to 'Back', story_story_snippet_path(@story, @previous_snippet), class: "btn" %>
+    <% else %>
+        &nbsp;
+    <% end %>
+  </div>
+  <div class="span4 center">
+    <%= link_to "Add Content", new_story_story_snippet_path(@story), class: "btn" %>
+  </div>
+  <div class="span2 center">
+    <% unless @next_snippet.nil? %>
+        <%= link_to 'Next', story_story_snippet_path(@story, @next_snippet), class: "btn" %>
+    <% end %>
+  </div>
+</div>

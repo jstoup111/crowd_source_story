@@ -53,7 +53,7 @@ describe StorySnippet do
   end
 
   describe "when content is too long" do
-    before { @snippet.content = "a" * 1001 }
+    before { @snippet.content = "a" * 10001 }
     it { should_not be_valid }
   end
 

@@ -4,14 +4,13 @@ describe "User pages" do
   subject { page }
 
   describe "authorization" do
+    let(:user) { FactoryGirl.create(:user) }
     describe "for non-signed in users" do
-      let(:user) { FactoryGirl.create(:user) }
-
       describe "in the Users controller" do
 
         describe "visiting the edit page" do
           before { visit edit_user_path(user) }
-          it { should have_selector('title', text: 'Sign in') }
+          it { should have_selector('title', text: full_title('Sign in')) }
         end
 
         describe "submitting to the update action" do
@@ -21,7 +20,7 @@ describe "User pages" do
 
         describe "visiting the user index" do
           before { visit users_path }
-          it { should have_selector('title', text: 'Sign in') }
+          it { should_not have_selector('title', text: full_title('Sign in')) }
         end
 
         # TODO followers
@@ -36,18 +35,18 @@ describe "User pages" do
 
       describe "after signing in" do
         it "should render the desired protected page" do
-          page.should have_selector('title', text: 'Edit user')
+          page.should have_selector('title', text: full_title('Edit your profile'))
         end
 
         describe "when signing in again" do
           before do
-            delete signout_path
+            log_out
             visit signin_path
             sign_in user
           end
 
           it "should render the default (profile) page" do
-            page.should have_selector('title',  text: user.name)
+            page.should have_selector('title',  text: full_title(""))
           end
         end
       end
@@ -60,7 +59,7 @@ describe "User pages" do
     it { should have_selector("title",      text: "Sign up") }
     it { should have_selector("h1",         text: "Sign up") }
 
-    let(:submit) { "Sign up" }
+    let(:submit) { "Become a writer" }
 
     describe "with invalid information" do
       it "should not create a user" do
@@ -70,8 +69,8 @@ describe "User pages" do
       describe "after submission" do
         before { click_button submit }
 
-        it { should have_selector("title",  text: "Sign up") }
-        it { should have_content("error") }
+        it { should have_selector("title",  text: full_title("Sign up")) }
+        it { should have_selector(".help-inline", text: "can't be blank") }
       end
     end
 
@@ -92,7 +91,7 @@ describe "User pages" do
         before { click_button submit }
         let(:user) { User.find_by_email('user@example.com') }
 
-        it { should have_selector("title",  text: user.name) }
+        it { should have_selector("title",  text: full_title(user.name, true)) }
         it { should have_selector("div.alert.alert-success",  text: "Welcome") }
         it { should have_link('Sign out') }
       end
@@ -139,7 +138,7 @@ describe "User pages" do
 
       describe "unfollowing a user" do
         before do
-          user.follower!(other_user)
+          user.follow!(other_user)
           visit user_path(other_user)
         end
 
@@ -152,7 +151,7 @@ describe "User pages" do
         it "should decrement the other user's followers count" do
           expect do
             click_button "Unfollow"
-          end.to change(other_users.followers, :count).by(-1)
+          end.to change(other_user.followers, :count).by(-1)
         end
 
         describe "toggling the button" do
@@ -172,14 +171,14 @@ describe "User pages" do
 
     describe "page" do
       it { should have_selector('h1',     text: 'Edit your profile') }
-      it { should have_selector('title',  text: 'Edit user') }
+      it { should have_selector('title',  text: full_title('Edit your profile')) }
       it { should have_link('change',   href: 'http://gravatar.com/emails') }
     end
 
     describe "with invalid information" do
-      before { click_button "Save changes" }
+      before { click_button "Change" }
 
-      it { should have_content('error') }
+      it { should have_selector('.help-inline',  text: "can't be blank") }
     end
 
     describe "with valid information" do
@@ -187,17 +186,15 @@ describe "User pages" do
       let(:new_email) { "new@example.com" }
       before do
         fill_in "Name", with: new_name
-        fill_in "Email",with: new_email
         fill_in "Password", with: user.password
         fill_in "Password Confirmation", with: user.password
-        click_button "Save changes"
+        click_button "Change"
       end
 
-      it { should have_selector('title', text: new_name) }
+      it { should have_selector('title', text: full_title("")) }
       it { should have_selector('div.alert.alert-success') }
       it { should have_link('Sign out', href: signout_path) }
       specify { user.reload.name.should == new_name }
-      specify { user.reload.email.should == new_email }
     end
   end
 
@@ -209,8 +206,8 @@ describe "User pages" do
       visit users_path
     end
 
-    it { should have_selector('title',  text: 'Writers') }
-    it { should have_selector('h1',     text: 'All writers') }
+    it { should have_selector('title',  text: full_title('Writers')) }
+    it { should have_selector('h1',     text: 'Writers') }
 
     describe "pagination" do
       before(:all)  { 30.times { FactoryGirl.create(:user) } }
@@ -242,8 +239,8 @@ describe "User pages" do
         visit following_user_path(user)
       end
 
-      it { should have_selector('title',  text: 'Following - #{user.name}') }
-      it { should have_selector('h3',     text: 'Following - #{user.name}') }
+      it { should have_selector('title',  text: full_title("#{user.name} - Following", true)) }
+      it { should have_selector('h3',     text: 'Following') }
       it { should have_link(other_user.name, href: user_path(other_user)) }
     end
 
@@ -253,23 +250,24 @@ describe "User pages" do
         visit followers_user_path(other_user)
       end
 
-      it { should have_selector('title',  text: 'Followers - #{user.name}') }
-      it { should have_selector('h3',     text: 'Followers - #{user.name}') }
+      it { should have_selector('title',  text: full_title("#{other_user.name} - Followers", true)) }
+      it { should have_selector('h3',     text: 'Followers') }
       it { should have_link(user.name,    href: user_path(user)) }
     end
   end
 
   describe "Stories" do
-    let(:user) { FactoryGirl.create(:user) }
-    let!(:story1) { FactoryGirl.create(:story, title: "Story 1") }
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:story1) { FactoryGirl.create(:story, title: full_title("Story 1", true)) }
     let!(:s1) { FactoryGirl.create(:story_snippet, user: user, story: story1) }
 
     before do
       sign_in user
+      visit stories_user_path(user)
     end
 
-    it { should have_selector('title',  text: 'Stories - #{user.name}') }
-    it { should have_selector('h3',     text: 'Stories - #{user.name}') }
+    it { should have_selector('title',  text: full_title("#{user.name} - Stories", true)) }
+    it { should have_selector('h3',     text: "#{user.name} - Stories") }
     it { should have_link(story1.title, href: story_path(story1)) }
   end
 end

@@ -1,5 +1,6 @@
 CrowdSourceStory::Application.routes.draw do
   resources :sessions,        only: [:new, :create, :destroy]
+  resources :relationships,   only: [:create, :destroy]
   resources :stories,         only: [:new, :create, :show, :index] do
     resources :story_snippets
   end

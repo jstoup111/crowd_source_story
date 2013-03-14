@@ -14,6 +14,13 @@ describe User do
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:confirmation) }
   it { should respond_to(:stories) }
+  it { should respond_to(:feed) }
+  it { should respond_to(:relationships) }
+  it { should respond_to(:followed_users) }
+  it { should respond_to(:reverse_relationships) }
+  it { should respond_to(:followers) }
+  it { should respond_to(:following?) }
+  it { should respond_to(:follow!) }
 
   it { should be_valid }
 
@@ -151,7 +158,50 @@ describe User do
         Story.find_by_id(s.id).should_not be_nil
       end
     end
+
+    describe "status" do
+      let(:unfollowed_snippet) do
+        FactoryGirl.create(:story_snippet, user: FactoryGirl.create(:user), story: story)
+      end
+      let(:followed_user) { FactoryGirl.create(:user) }
+
+      before do
+        @user.follow!(followed_user)
+        3.times { FactoryGirl.create(:story_snippet, user: followed_user, story: story) }
+      end
+
+      its(:feed) { should include(newer_snippet) }
+      its(:feed) { should include(older_snippet) }
+      its(:feed) { should_not include(unfollowed_snippet) }
+      its(:feed) do
+        followed_user.story_snippets.each do |snippet|
+          should include(snippet)
+        end
+      end
+    end
   end
 
+  describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do
+      @user.save
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+    its(:followed_users) { should include(other_user) }
+
+    describe "followed user" do
+      subject { other_user }
+      its(:followers) { should include(@user) }
+    end
+
+    describe "and unfollowing" do
+      before { @user.unfollow!(other_user) }
+
+      it { should_not be_following(other_user) }
+      its(:followed_users) { should_not include(other_user) }
+    end
+  end
   # TODO create confirmation token email and test for this
 end

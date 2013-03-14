@@ -1,0 +1,11 @@
+<div class="user-stories">
+  <a href="<%= stories_user_path(@user) %>">
+    <strong class="stat">
+      <%= @user.followed_users.count %>
+    </strong>
+    stories
+  </a>
+  <ul class="stories">
+    <%= render @stories %>
+  </ul>
+</div>

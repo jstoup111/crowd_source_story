@@ -8,7 +8,7 @@ gem 'rails', '3.2.12'
 gem 'pg'
 gem 'will_paginate', '3.0.3'
 gem 'bootstrap-will_paginate', '0.0.6'
-
+gem 'faker', '1.0.1'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -23,10 +23,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
-#gem 'bootstrap-sass', '2.1.0.0'
-gem 'therubyracer', '0.11.4'
-gem 'less-rails', '2.3.2'
-gem 'less-rails-bootstrap', '2.3.2'
+gem 'bootstrap-sass', '2.1.0.0'
+gem 'simple_form', '2.1.0'
 
 # To use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.0.0'
@@ -50,4 +48,5 @@ end
 
 group :test do
   gem 'factory_girl_rails', '4.1.0'
+  gem 'database_cleaner', '0.7.0'
 end
