@@ -1,0 +1,11 @@
+<% provide :title, "Create Story Snippet" %>
+<h1>Create Story Snippet</h1>
+<div class="row">
+  <div class="span10 offset1">
+    <p><%= @content %></p>
+    <%= simple_form_for @story_snippet, url: story_story_snippets_path do |f| %>
+        <%= f.input :content, as: :text, input_html: { class: 'span10' } %>
+        <%= f.submit 'Create', class: 'controls btn btn-primary btn-large .center' %>
+    <% end %>
+  </div>
+</div>

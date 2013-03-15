@@ -1,0 +1,11 @@
+<% provide :title, "#{@story.title} - #{get_chapter(@story, @story_snippet)}" %>
+<% provide :override, true %>
+<h1 class="title"><%= @story.title %></h1>
+<div class="row">
+  <div class="span10 offset1">
+    <div class="description">
+        <h4><%= @story_snippet.content %></h4>
+    </div>
+  </div>
+</div>
+<%= render 'story_navigation' %>

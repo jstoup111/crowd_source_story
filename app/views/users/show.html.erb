@@ -1,0 +1,19 @@
+<% provide :title, @user.name %>
+<div class="row">
+  <aside class="span4">
+    <section>
+      <%= render 'shared/user_info' %>
+    </section>
+    <section>
+      <%= render 'shared/stats' %>
+    </section>
+  </aside>
+  <div class="span8">
+    <%= render 'follow_form' if signed_in? %>
+    <h3>Story Contributions (<%= @story_snippets.count %>)</h3>
+    <ol class="stories">
+      <%= render @story_snippets %>
+    </ol>
+    <%= will_paginate @story_snippets %>
+  </div>
+</div>

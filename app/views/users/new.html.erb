@@ -1,0 +1,14 @@
+<% provide :title, 'Sign up' %>
+<div class="row">
+  <div class="span6 offset3">
+      <h1>Sign up</h1>
+      <%= simple_form_for @user, html: {class: 'form-horizontal' } do |f| %>
+          <%= f.input :name, label: 'Your Name', placeholder: 'Please Enter your Name' %>
+          <%= f.input :username, label: 'Username', placeholder: 'Your username' %>
+          <%= f.input :email, label: 'Email', placeholder: 'Your Email' %>
+          <%= f.input :password %>
+          <%= f.input :password_confirmation, label: "Password Confirmation" %>
+          <%= f.submit 'Become a writer', class: 'controls btn btn-primary btn-large' %>
+      <% end %>
+  </div>
+</div>

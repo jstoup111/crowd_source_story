@@ -1,0 +1,11 @@
+<% provide :title, "#{@story.title}" %>
+<% provide :override, true %>
+<h1 class="center title"><%= @story.title %></h1>
+<div class="row">
+  <div class="span10 offset1">
+    <div class="description">
+        <h4><%= @story.description %></h4>
+    </div>
+  </div>
+</div>
+<%= render 'story_snippets/story_navigation' %>

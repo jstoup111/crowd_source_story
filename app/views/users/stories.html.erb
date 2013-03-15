@@ -1,0 +1,10 @@
+<% provide(:title, "#{@user.name} - Stories") %>
+<% provide(:override, true) %>
+
+<div class="row">
+  <div class="span6 offset3">
+        <h3 class="center"><%= "#{@user.name} - Stories" %></h3>
+
+        <%= render 'stories/story_list' %>
+  </div>
+</div>

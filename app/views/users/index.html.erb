@@ -1,0 +1,12 @@
+<% provide :title, 'Writers' %>
+<div class="row">
+  <div class="span6 offset3">
+    <h1>Writers</h1>
+
+    <%= will_paginate %>
+    <ul>
+      <%= render @users %>
+    </ul>
+    <%= will_paginate %>
+  </div>
+</div>
