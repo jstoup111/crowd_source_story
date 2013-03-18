@@ -178,10 +178,15 @@ describe "Story Pages" do
       before do
         fill_in "Title", with: "New Story"
         fill_in "Description",with: "This is a test description"
+        fill_in "Content", with: "Here is some content that make what we've put in valid.  Thank god we have some valid information"
       end
 
       it "should create a story" do
         expect { click_button submit }.to change(Story, :count)
+      end
+
+      it "should create a story snippet" do
+        expect { click_button submit }.to change(StorySnippet, :count)
       end
 
       describe "after submission" do
@@ -189,6 +194,7 @@ describe "Story Pages" do
         let(:story) { Story.find_by_title('New Story') }
 
         describe "create story snippet" do
+          before { visit new_story_story_snippet_path story }
           let(:submit) { "Create" }
 
           it { should have_selector('title',    text: full_title('Create Story Snippet')) }

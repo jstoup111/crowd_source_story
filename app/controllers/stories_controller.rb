@@ -3,12 +3,15 @@ class StoriesController < ApplicationController
 
   def new
     @story = Story.new
+    @story.story_snippets.build
+    @story.story_snippets.first.user = current_user
   end
 
   def create
     @story = Story.new(params[:story])
+    @story.story_snippets.first.user = current_user
     if @story.save
-      redirect_to new_story_story_snippet_path @story
+      redirect_to story_path @story
     else
       render 'new'
     end

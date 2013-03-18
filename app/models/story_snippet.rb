@@ -6,11 +6,11 @@ class StorySnippet < ActiveRecord::Base
   attr_accessible :content
 
   belongs_to :user
-  belongs_to :story
+  belongs_to :story, inverse_of: :story_snippets
 
   validates :content,   presence: true, length: { maximum: 10000, minimum: 25 }
-  validates :user_id,   presence: true
-  validates :story_id,  presence: true
+  validates :story,     presence: true
+  validates :user,      presence: true
 
   def self.from_users_followed_by(user)
     followed_user_ids = "SELECT followed_id FROM relationships WHERE follower_id = :user_id"

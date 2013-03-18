@@ -4,7 +4,10 @@
     <h1 class="center">Create Story</h1>
     <%= simple_form_for @story, url: stories_path do |f| %>
         <%= f.input :title, placeholder: 'Story Title', input_html: { class: 'span6' } %>
-        <%= f.input :description, as: :text, input_html: { class: 'span6' } %>
+        <%= f.input :description, input_html: { class: 'span6' } %>
+        <%= f.simple_fields_for :story_snippets do |s| %>
+            <%= s.input :content, as: :text, input_html: { class: 'span6' } %>
+        <% end %>
         <%= f.submit 'Create', class: 'controls btn btn-primary btn-large .center' %>
     <% end %>
   </div>
