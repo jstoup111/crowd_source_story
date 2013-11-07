@@ -4,7 +4,15 @@
 <div class="row">
   <div class="span10 offset1">
     <div class="description">
+      <div class="row-fluid">
+        <h5>
+          <%=  gravatar_for @story_snippet.user, size: 52 %>
+          <%=  link_to @story_snippet.user.name, @story_snippet.user %>
+        </h5>
+      </div>
+      <div class="row-fluid story-content">
         <h4><%= @story_snippet.content %></h4>
+      </div>
     </div>
   </div>
 </div>

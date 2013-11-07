@@ -2,7 +2,7 @@ class StaticPagesController < ApplicationController
   def home
     @user = current_user
     if @user
-      @story_snippets = @user.story_snippets.first(5)
+      @story_snippets = @user.feed
     else
       @story_snippets = nil
     end

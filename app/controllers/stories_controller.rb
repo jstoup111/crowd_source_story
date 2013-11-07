@@ -11,6 +11,8 @@ class StoriesController < ApplicationController
     @story = Story.new(params[:story])
     @story.story_snippets.first.user = current_user
     if @story.save
+      #Mail users who are following
+      
       redirect_to story_path @story
     else
       render 'new'

@@ -1,5 +1,5 @@
 <li>
-  <div class="story-feed">
+  <div class="story-feed" title="<%= story_snippet.story.description %>">
     <h6><%= link_to story_snippet.story.title, [story_snippet.story, story_snippet] %></h6>
     <div class="story-description"><%= story_snippet.content[0..30] %>...</div>
   </div>

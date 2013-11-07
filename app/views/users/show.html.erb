@@ -11,9 +11,9 @@
   <div class="span8">
     <%= render 'follow_form' if signed_in? %>
     <h3>Story Contributions (<%= @story_snippets.count %>)</h3>
-    <ol class="stories">
+    <ul class="stories">
       <%= render @story_snippets %>
-    </ol>
+    </ul>
     <%= will_paginate @story_snippets %>
   </div>
 </div>

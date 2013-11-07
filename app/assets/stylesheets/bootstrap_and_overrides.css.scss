@@ -214,7 +214,7 @@ input {
 
 /* microposts */
 
-.microposts {
+.stories {
   list-style: none;
   margin: 10px 0 0 0;
 
@@ -222,6 +222,11 @@ input {
     padding: 10px 0;
     border-top: 1px solid #e8e8e8;
   }
+}
+
+.story-content{
+  margin-top: 10px;
+  border-top: 1px solid $grayLighter;
 }
 
 .content {
